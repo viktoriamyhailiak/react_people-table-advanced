@@ -37,17 +37,15 @@ export const PeopleFilters = () => {
     setSearchParams('');
   }
 
-  function toggleCenturies(x: number) {
+  function toggleCenturies(x: string) {
     const params = new URLSearchParams(searchParams);
 
-    const newCenturies = centuries.includes(x.toString())
-      ? centuries.filter(y => y.toString() !== x.toString())
-      : [...centuries, x.toString()];
+    const newCenturies = centuries.includes(x)
+      ? centuries.filter(y => y !== x)
+      : [...centuries, x];
 
     params.delete('centuries');
-    newCenturies.forEach(century =>
-      params.append('centuries', century.toString()),
-    );
+    newCenturies.forEach(century => params.append('centuries', century));
     setSearchParams(params);
   }
 
@@ -106,7 +104,7 @@ export const PeopleFilters = () => {
               className={classNames('button mr-1', {
                 'is-info': centuries.includes('16'),
               })}
-              onClick={() => toggleCenturies(16)}
+              onClick={() => toggleCenturies('16')}
             >
               16
             </SearchLink>
@@ -117,7 +115,7 @@ export const PeopleFilters = () => {
               className={classNames('button mr-1', {
                 'is-info': centuries.includes('17'),
               })}
-              onClick={() => toggleCenturies(17)}
+              onClick={() => toggleCenturies('17')}
             >
               17
             </SearchLink>
@@ -128,7 +126,7 @@ export const PeopleFilters = () => {
               className={classNames('button mr-1', {
                 'is-info': centuries.includes('18'),
               })}
-              onClick={() => toggleCenturies(18)}
+              onClick={() => toggleCenturies('18')}
             >
               18
             </SearchLink>
@@ -139,7 +137,7 @@ export const PeopleFilters = () => {
               className={classNames('button mr-1', {
                 'is-info': centuries.includes('19'),
               })}
-              onClick={() => toggleCenturies(19)}
+              onClick={() => toggleCenturies('19')}
             >
               19
             </SearchLink>
@@ -150,7 +148,7 @@ export const PeopleFilters = () => {
               className={classNames('button mr-1', {
                 'is-info': centuries.includes('20'),
               })}
-              onClick={() => toggleCenturies(20)}
+              onClick={() => toggleCenturies('20')}
             >
               20
             </SearchLink>
