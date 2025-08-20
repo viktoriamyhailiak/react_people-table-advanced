@@ -11,6 +11,7 @@ export const PeoplePage = () => {
   const [people, setPeople] = useState<Person[] | []>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { slug } = useParams();
+  const isLoaded= !isLoading && people.length > 0;
 
   useEffect(() => {
     setIsLoading(true);
@@ -32,7 +33,7 @@ export const PeoplePage = () => {
           <div className="columns is-desktop is-flex-direction-row-reverse">
             <div className="column is-7-tablet is-narrow-desktop">
               {!isLoading && people.length > 0 && (
-                <PeopleFilters isLoading={isLoading} />
+                <PeopleFilters isLoaded={isLoaded} />
               )}
             </div>
 

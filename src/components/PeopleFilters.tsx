@@ -3,16 +3,16 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SearchLink } from './SearchLink';
 
-type Props = { isLoading: boolean };
+type Props = { isLoaded: boolean };
 
-export const PeopleFilters: React.FC<Props> = ({ isLoading }) => {
+export const PeopleFilters: React.FC<Props> = ({ isLoaded }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const centuries = searchParams.getAll('centuries') || [];
   const [activeLink, setActiveLink] = useState('all');
   const [isAllReseted, setIsAllReseted] = useState<boolean>(true);
   const [input, setInput] = useState<string>('');
 
-  if (!isLoading) {
+  if (!isLoaded) {
     return null;
   }
 
