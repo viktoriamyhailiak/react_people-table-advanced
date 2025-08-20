@@ -3,12 +3,18 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SearchLink } from './SearchLink';
 
-export const PeopleFilters = () => {
+type Props = { isLoading: boolean };
+
+export const PeopleFilters: React.FC<Props> = ({ isLoading }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const centuries = searchParams.getAll('centuries') || [];
   const [activeLink, setActiveLink] = useState('all');
   const [isAllReseted, setIsAllReseted] = useState<boolean>(true);
   const [input, setInput] = useState<string>('');
+
+  if (!isLoading) {
+    return null;
+  }
 
   function handleQueryChange(e: React.ChangeEvent<HTMLInputElement>) {
     const params = new URLSearchParams(searchParams);
