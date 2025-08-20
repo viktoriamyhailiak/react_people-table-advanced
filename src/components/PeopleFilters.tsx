@@ -1,19 +1,26 @@
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SearchLink } from './SearchLink';
 
 export const PeopleFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get('queкн') || '';
-  const gender = searchParams.get('sex') || 'all';
   const centuries = searchParams.getAll('centuries') || [];
   const [activeLink, setActiveLink] = useState('all');
+  const [isAllReseted, setIsAllReseted] = useState<boolean>(true);
+  const [input, setInput] = useState<string>('');
 
   function handleQueryChange(e: React.ChangeEvent<HTMLInputElement>) {
     const params = new URLSearchParams(searchParams);
 
-    params.set('query', e.target.value);
+    setInput(e.target.value);
+
+    if (e.target.value.length !== 0) {
+      params.set('query', e.target.value.trim().toLowerCase());
+    } else {
+      params.delete('query');
+    }
+
     setSearchParams(params);
   }
 
@@ -26,18 +33,14 @@ export const PeopleFilters = () => {
     setSearchParams(params);
   }
 
-  function clearCenturies() {
-    const params = new URLSearchParams(searchParams);
-
-    params.delete('centuries');
-    setSearchParams(params);
-  }
-
   function clearAll() {
+    setInput('');
     setSearchParams('');
+    setActiveLink('all');
+    setIsAllReseted(true);
   }
 
-  function toggleCenturies(x: string) {
+  async function toggleCenturies(x: string) {
     const params = new URLSearchParams(searchParams);
 
     const newCenturies = centuries.includes(x)
@@ -45,7 +48,7 @@ export const PeopleFilters = () => {
       : [...centuries, x];
 
     params.delete('centuries');
-    newCenturies.forEach(century => params.append('centuries', century));
+    await newCenturies.forEach(century => params.append('centuries', century));
     setSearchParams(params);
   }
 
@@ -87,6 +90,7 @@ export const PeopleFilters = () => {
             className="input"
             placeholder="Search"
             onChange={e => handleQueryChange(e)}
+            value={input}
           />
 
           <span className="icon is-left">
@@ -98,83 +102,50 @@ export const PeopleFilters = () => {
       <div className="panel-block">
         <div className="level is-flex-grow-1 is-mobile" data-cy="CenturyFilter">
           <div className="level-left">
-            <SearchLink
-              params={{ centuries: [...centuries, '16'] }}
-              data-cy="century"
-              className={classNames('button mr-1', {
-                'is-info': centuries.includes('16'),
-              })}
-              onClick={() => toggleCenturies('16')}
-            >
-              16
-            </SearchLink>
-
-            <SearchLink
-              params={{ centuries: [...centuries, '17'] }}
-              data-cy="century"
-              className={classNames('button mr-1', {
-                'is-info': centuries.includes('17'),
-              })}
-              onClick={() => toggleCenturies('17')}
-            >
-              17
-            </SearchLink>
-
-            <SearchLink
-              params={{ centuries: [...centuries, '18'] }}
-              data-cy="century"
-              className={classNames('button mr-1', {
-                'is-info': centuries.includes('18'),
-              })}
-              onClick={() => toggleCenturies('18')}
-            >
-              18
-            </SearchLink>
-
-            <SearchLink
-              params={{ centuries: [...centuries, '19'] }}
-              data-cy="century"
-              className={classNames('button mr-1', {
-                'is-info': centuries.includes('19'),
-              })}
-              onClick={() => toggleCenturies('19')}
-            >
-              19
-            </SearchLink>
-
-            <SearchLink
-              params={{ centuries: [...centuries, '20'] }}
-              data-cy="century"
-              className={classNames('button mr-1', {
-                'is-info': centuries.includes('20'),
-              })}
-              onClick={() => toggleCenturies('20')}
-            >
-              20
-            </SearchLink>
+            {['16', '17', '18', '19', '20'].map(currentCentury => (
+              <SearchLink
+                data-cy="century"
+                className={classNames('button mr-1', {
+                  'is-info': centuries.includes(currentCentury.toString()),
+                })}
+                params={{
+                  century: centuries.includes(currentCentury)
+                    ? centuries.filter(curr => curr !== currentCentury)
+                    : [...centuries, currentCentury],
+                }}
+                key={currentCentury}
+                onClick={() => {
+                  toggleCenturies(currentCentury);
+                }}
+              >
+                {currentCentury}
+              </SearchLink>
+            ))}
           </div>
 
           <div className="level-right ml-4">
-            <a
+            <SearchLink
               data-cy="centuryALL"
-              className="button is-success is-outlined"
-              href="#/people"
-              onClick={() => clearCenturies()}
+              className={classNames('button is-success', {
+                'is-outlined': centuries.length > 0,
+              })}
+              params={{ centuries: [] }}
             >
               All
-            </a>
+            </SearchLink>
           </div>
         </div>
       </div>
 
       <div className="panel-block">
-        <a
-          className="button is-link is-outlined is-fullwidth"
-          href="#/people"
+        <button
+          className={classNames('button is-link is-fullwidth', {
+            'is-outlined': isAllReseted === true,
+          })}
           onClick={() => clearAll()}
         >
           Reset all filters
-        </a>
+        </button>
       </div>
     </nav>
   );
